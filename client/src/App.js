@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { providers } from "ethers";
+import { ethers } from "ethers";
 import Upload from "./artifacts/contracts/Upload.sol/Upload.json";
 import FileUpload from "./components/FileUpload";
 import Display from "./components/Display";
