@@ -13,10 +13,10 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
     const loadProvider = async () => {
-      if (provider) {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
         window.ethereum.on("chainChanged", () => {
           window.location.reload();
         });
@@ -29,8 +29,8 @@ function App() {
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
-        let contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 
+        const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
         const contract = new ethers.Contract(
           contractAddress,
           Upload.abi,
@@ -42,7 +42,8 @@ function App() {
         console.error("Metamask is not installed");
       }
     };
-    provider && loadProvider();
+
+    loadProvider();
   }, []);
 
   return (
@@ -57,7 +58,7 @@ function App() {
       )}
 
       <div className="App">
-        <h1 style={{ color: "white" }}> Sky Locker </h1>
+        <h1 style={{ color: "white" }}>Sky Locker</h1>
         <div className="bg"></div>
         <div className="bg bg2"></div>
         <div className="bg bg3"></div>
