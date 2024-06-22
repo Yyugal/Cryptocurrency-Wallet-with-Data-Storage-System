@@ -13,38 +13,36 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    const initProvider = async () => {
-      if (window.ethereum) {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-          window.ethereum.on("chainChanged", () => {
-            window.location.reload();
-          });
+    const loadProvider = async () => {
+      if (provider) {
+        window.ethereum.on("chainChanged", () => {
+          window.location.reload();
+        });
 
-          window.ethereum.on("accountsChanged", () => {
-            window.location.reload();
-          });
+        window.ethereum.on("accountsChanged", () => {
+          window.location.reload();
+        });
 
-          await provider.send("eth_requestAccounts", []);
-          const signer = provider.getSigner();
-          const address = await signer.getAddress();
-          setAccount(address);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        setAccount(address);
+        let contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 
-          const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
-          const contract = new ethers.Contract(contractAddress, Upload.abi, signer);
-
-          setContract(contract);
-          setProvider(provider);
-        } catch (error) {
-          console.error("Failed to initialize provider:", error);
-        }
+        const contract = new ethers.Contract(
+          contractAddress,
+          Upload.abi,
+          signer
+        );
+        setContract(contract);
+        setProvider(provider);
       } else {
-        console.error("MetaMask is not installed");
+        console.error("Metamask is not installed");
       }
     };
-
-    initProvider();
+    provider && loadProvider();
   }, []);
 
   return (
@@ -55,7 +53,7 @@ function App() {
         </button>
       )}
       {modalOpen && (
-        <Modal setModalOpen={setModalOpen} contract={contract} />
+        <Modal setModalOpen={setModalOpen} contract={contract}></Modal>
       )}
 
       <div className="App">
@@ -65,10 +63,14 @@ function App() {
         <div className="bg bg3"></div>
 
         <p style={{ color: "white" }}>
-          Account: {account ? account : "Not connected"}
+          Account : {account ? account : "Not connected"}
         </p>
-        <FileUpload account={account} provider={provider} contract={contract} />
-        <Display contract={contract} account={account} />
+        <FileUpload
+          account={account}
+          provider={provider}
+          contract={contract}
+        ></FileUpload>
+        <Display contract={contract} account={account}></Display>
       </div>
     </>
   );
